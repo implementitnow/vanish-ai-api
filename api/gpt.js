@@ -1,16 +1,15 @@
 // api/gpt.js
-const { Configuration, OpenAIApi } = require("openai");
+import { Configuration, OpenAIApi } from "openai";
 
-module.exports = async (req, res) => {
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
+
+export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).send("Method Not Allowed");
+    return res.status(405).json({ error: "Only POST allowed" });
   }
-
-  const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-
-  const openai = new OpenAIApi(configuration);
 
   const { prompt } = req.body;
 
@@ -28,4 +27,4 @@ module.exports = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Failed to generate quote." });
   }
-};
+}
